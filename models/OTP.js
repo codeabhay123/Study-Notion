@@ -14,7 +14,7 @@ const OTPSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 5 * 60, // OTP expires after 5 minutes
+    expires: 10 * 60, // OTP expires after 5 minutes
   },
 });
 
@@ -24,7 +24,7 @@ async function sendVerificationEmail(email, otp) {
     const mailResponse = await mailSender(
       email,
       "Your OTP for verification",
-      `Your OTP is <b>${otp}</b>. It will expire in 5 minutes. Please do not share it with anyone.`
+      `Your OTP is <b>${otp}</b>. It will expire in 10 minutes. Please do not share it with anyone.`
     );
     console.log("Mail sent successfully:", mailResponse);
     return mailResponse;

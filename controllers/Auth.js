@@ -181,7 +181,6 @@ exports.signUp = async(req,res) =>{
 
 
 
-
 // =========================================================
 // Login Controller
 // =========================================================
@@ -220,32 +219,32 @@ exports.login = async (req , res )=>{
     const payload = {
       email: user.email,
       id: user._id,
-      role: user.role,
+      role: user.accountType,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "2h", // token expiry
     });
 
-    // 6. Hide password before sending user back
-    user.password = undefined;
+    // 6. Store token temporarily (not in DB, just response)
+    user.token = token;
+    user.password = undefined; // remove password before sending response
 
-   user.token = token;
-user.password = undefined;
+    // 7. Create cookie options
+    const options = {
+      expires: new Date(Date.now() + 3*24*60*60*1000), // Cookie valid for 3 days
+      httpOnly: true, // Cookie not accessible via JS
+     // secure: process.env.NODE_ENV === "production", // send only over HTTPS in prod
+    //  sameSite: "strict" // CSRF protection
+    };
 
-//create cookie and send response
-const options = {
-  expires: new Date(Date.now() + 3*24*60*60*1000), // ✅ Cookie valid for 3 days
-  httpOnly: true, // ✅ Can't access cookie from JS (security)
-}
-
-res.cookie("token", token, options).status(200).json({
-  success: true,
-  token,
-  user,
-  message: "Logged in successfully",
-})
-
+    // 8. Send response with cookie + token
+    return res.cookie("token", token, options).status(200).json({
+      success: true,
+      token,
+      user,
+      message: "Logged in successfully",
+    });
 
   } catch (error) {
     console.log(error);
@@ -255,3 +254,22 @@ res.cookie("token", token, options).status(200).json({
     });
   }
 };
+ 
+
+// Change Password
+
+
+exports.changePassword = async (req, res) =>{
+
+  //get data fron rqq body
+  //get oldPassword , newPassword , confirmNewpassword 
+  //validation
+  //update the passord in the database
+  //send mail password update  
+  // return reponse
+
+
+}
+
+
+ 
